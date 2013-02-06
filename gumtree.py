@@ -20,7 +20,7 @@ class SearchListing:
     A gumtree search result set containing GTItem objects
     """
 
-    def __init__(self, category, query=False, location=False):
+    def __init__(self, category, query="", location=""):
         self.category = category
         self.query = query    
         self.location = location
@@ -36,7 +36,8 @@ class SearchListing:
 
         request_headers = {'User-agent': USER_AGENT,}
 
-        request = requests.get("http://www.gumtree.com/%s" % self.category, headers=request_headers)
+        request = requests.get("http://www.gumtree.com/search?q=%s&search_location=%s&category=%s" % (self.query, self.location, self.category), headers=request_headers)
+
 
         if request.status_code == 200:
             # Got a valid response
@@ -56,6 +57,7 @@ class SearchListing:
             return listing_results
         else:
             # TODO: Add error handling
+            print "Server returned code %s" % request.status_code
             return []
 
 class GTItem:
