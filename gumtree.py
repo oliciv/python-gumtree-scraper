@@ -36,7 +36,7 @@ class SearchListing:
 
         request_headers = {'User-agent': USER_AGENT,}
 
-        request = requests.get("http://www.gumtree.com/motorbikes-scooters", headers=request_headers)
+        request = requests.get("http://www.gumtree.com/%s" % self.category, headers=request_headers)
 
         if request.status_code == 200:
             # Got a valid response
