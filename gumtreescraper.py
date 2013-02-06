@@ -4,10 +4,6 @@ python-gumtree
 Gumtree scraper written in Python
 
 Copyright 2013 Oli Allen <oli@oliallen.com>
-
-THIS SOFTWARE IS SUPPLIED WITHOUT WARRANTY OF ANY KIND, AND MAY BE
-COPIED, MODIFIED OR DISTRIBUTED IN ANY WAY, AS LONG AS THIS NOTICE
-AND ACKNOWLEDGEMENT OF AUTHORSHIP REMAIN.
 """
 
 USER_AGENT = "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)"
