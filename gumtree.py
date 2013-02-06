@@ -53,6 +53,7 @@ class SearchListing:
                     item_instance.summary = listing.find("div", class_="ad-description").find("span").string
                     item_instance.location =  listing.find("span", class_="location").string
                     item_instance.thumbnail = listing.find("img", class_="thumbnail").get("src")
+                    item_instance.adref = listing.find("div", class_="ad-save").get("data-ad-id")
                     listing_results.append(item_instance)
             return listing_results
         else:
@@ -61,8 +62,20 @@ class SearchListing:
             return []
 
 class GTItem:
+    """
+    An individual gumtree item
+    """
     def __init__(self, title, summary="", description="", thumbnail="", price="", location="", adref="", url="", contact_name="", contact_number=""):
         self.title = title
+        self.summary = summary
+        self.description = description
+        self.thumbnail = thumbnail
+        self.price = price
+        self.location = location
+        self.adref = adref
+        self.url = url
+        self.contact_name = contact_name
+        self.contact_number = contact_number
 
     def __str__(self):
         return self.title
