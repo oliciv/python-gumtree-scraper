@@ -20,7 +20,11 @@ class SearchListing:
         self.category = category
         self.query = query    
         self.location = location
+
+        self.request_headers = {'User-agent': USER_AGENT,}
+
         self.listing_results = self.doSearch()
+
 
     def __str__(self):
         return "Search listing"
@@ -30,9 +34,7 @@ class SearchListing:
         Performs the search against gumtree
         """
 
-        request_headers = {'User-agent': USER_AGENT,}
-
-        request = requests.get("http://www.gumtree.com/search?q=%s&search_location=%s&category=%s" % (self.query, self.location, self.category), headers=request_headers)
+        request = requests.get("http://www.gumtree.com/search?q=%s&search_location=%s&category=%s" % (self.query, self.location, self.category), headers=self.request_headers)
 
 
         if request.status_code == 200:
@@ -45,17 +47,47 @@ class SearchListing:
                 for listing in listings_wrapper.find_all("li", class_="offer-sale"):
                     title = listing.find("a", class_="description").get("title")
                     item_instance = GTItem(title=title)
+                    item_instance.url = listing.find("a", class_="description").get("href")
                     item_instance.price = listing.find("span", class_="price").string
                     item_instance.summary = listing.find("div", class_="ad-description").find("span").string
                     item_instance.location =  listing.find("span", class_="location").string
                     item_instance.thumbnail = listing.find("img", class_="thumbnail").get("src")
                     item_instance.adref = listing.find("div", class_="ad-save").get("data-ad-id")
+
+                    item_instance.description, item_instance.contact_name, item_instance.contact_number = self.getFullInformation(item_instance)
+
                     listing_results.append(item_instance)
             return listing_results
         else:
             # TODO: Add error handling
             print "Server returned code %s" % request.status_code
             return []
+
+    def getFullInformation(self, item_instance):
+        """
+        Scrape information from a full gumtree advert page
+        """
+        request = requests.get(item_instance.url, headers=self.request_headers)
+        if request.status_code == 200:
+            # Got a valid response
+            souped = BeautifulSoup(request.text, "html5lib")
+            description = souped.find("div", id="vip-description-text").string
+            contact = souped.find(class_="phone")
+            if not contact:
+                contact_name, contact_number = ["",""]
+            else:
+                if " on " in contact.string:
+                    contact_name, contact_number = contact.string.split(" on ")
+                else:
+                    contact_name, contact_number = ["", contact.string]
+            print contact_name
+            print contact_number
+            return description, contact_name, contact_number
+        else:
+            # TODO: Add error handling
+            print "Server returned code %s for %s" % (request.status_code, url)
+            return []
+
 
 class GTItem:
     """
