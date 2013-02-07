@@ -72,6 +72,10 @@ class SearchListing:
             # Got a valid response
             souped = BeautifulSoup(request.text, "html5lib")
             description = souped.find("div", id="vip-description-text").string
+            if description:
+                description = description.strip()
+            else:
+                description = ""
             contact = souped.find(class_="phone")
             if not contact:
                 contact_name, contact_number = ["",""]
@@ -80,8 +84,6 @@ class SearchListing:
                     contact_name, contact_number = contact.string.split(" on ")
                 else:
                     contact_name, contact_number = ["", contact.string]
-            print contact_name
-            print contact_number
             return description, contact_name, contact_number
         else:
             # TODO: Add error handling
